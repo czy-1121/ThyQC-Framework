@@ -5,8 +5,8 @@ Official implementation of **ThyQC**, a multi-task quality-control framework for
 ## Installation
 
 ```bash
-git clone https://github.com/czy-1121/ThyQC-Reproducible.git
-cd ThyQC-Reproducible
+git clone https://github.com/czy-1121/ThyQC.git
+cd ThyQC
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -14,15 +14,15 @@ pip install -r requirements.txt
 
 The student backbone is [OpenGVLab/InternVL3_5-2B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-2B-HF).
 
-## Reproduction
+## Evaluation
 
-The repository includes de-identified evaluation images, labels, three ThyQC checkpoints, and the cached student probabilities required by GT-QDM. Run the bundled evaluation with:
+The repository includes de-identified evaluation images, labels, ThyQC checkpoints, and the cached student probabilities required by GT-QDM. Run the evaluation with:
 
 ```bash
-python code/evaluate_public.py --all-seeds
+python code/evaluate_thyqc.py --all-seeds
 ```
 
-Predictions and task-level metrics are written to `results/reproduced/`. Small numerical differences across supported PyTorch environments are expected; values within 2 percentage points are considered consistent.
+Predictions and task-level metrics are written to `results/evaluation/`.
 
 ## Data format
 

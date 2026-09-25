@@ -24,8 +24,8 @@ def argparse_defaults(path: Path):
     return values
 
 
-class PublicReproducibilityTest(unittest.TestCase):
-    def test_public_anonymized_set_is_complete(self):
+class ThyQCFrameworkTest(unittest.TestCase):
+    def test_anonymized_evaluation_set_is_complete(self):
         data_root = ROOT / "data" / "anonymized_test"
         images = sorted((data_root / "images").glob("*.jpg"))
         frame_dirs = sorted((data_root / "ordered_frames").glob("THYQC_TEST_*"))
@@ -47,8 +47,8 @@ class PublicReproducibilityTest(unittest.TestCase):
             self.assertGreater(backbone.stat().st_size, 1_000_000)
             self.assertGreater(temporal.stat().st_size, 10_000)
 
-    def test_public_evaluation_assets_cover_all_seeds(self):
-        evaluator = ROOT / "code" / "evaluate_public.py"
+    def test_evaluation_assets_cover_all_seeds(self):
+        evaluator = ROOT / "code" / "evaluate_thyqc.py"
         self.assertTrue(evaluator.is_file())
         for seed in (41, 42, 43):
             features = ROOT / "results" / "features" / f"seed{seed}_public_features.jsonl"
@@ -92,12 +92,17 @@ class PublicReproducibilityTest(unittest.TestCase):
             self.assertEqual(config["semantic_cost_mode"], "fixed_jaccard")
             self.assertEqual(config["uot_loss_mode"], "transport")
 
-    def test_readme_uses_paper_repository_style(self):
+    def test_readme_uses_thyqc_framework_style(self):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("Official implementation", readme)
-        self.assertNotIn("This public release contains", readme)
-        self.assertNotIn("No raw clinical dataset", readme)
-        self.assertIn("2 percentage points", readme)
+        self.assertIn("github.com/czy-1121/ThyQC.git", readme)
+        self.assertIn("## Evaluation", readme)
+
+    def test_generic_framework_file_names(self):
+        self.assertTrue((ROOT / "code" / "evaluate_thyqc.py").is_file())
+        self.assertTrue((ROOT / "run_inference.sh").is_file())
+        self.assertFalse((ROOT / "code" / "evaluate_public.py").exists())
+        self.assertFalse((ROOT / "run_formal_inference.sh").exists())
 
     def test_two_stage_pipeline_has_cache_builder(self):
         builder = ROOT / "code" / "build_g2d_gt_qdm_prob_cache_20260919.py"

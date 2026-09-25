@@ -15,4 +15,4 @@ checkpoints/
 *.tar.gz
 *.zip
 
-results/reproduced/
+results/evaluation/

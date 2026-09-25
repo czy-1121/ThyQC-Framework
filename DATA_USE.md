@@ -1,10 +1,10 @@
 # Data Use
 
-The released anonymized subset is intended for reproducible thyroid ultrasound quality-control research.
+The anonymized subset is intended for thyroid ultrasound quality-control research and framework evaluation.
 
 Allowed use:
 
-- Recompute the reported five-task quality-control metrics.
+- Evaluate five-task thyroid ultrasound quality-control models.
 - Compare quality-control models under the same closed vocabulary.
 - Inspect acquisition quality labels and failure modes.
 

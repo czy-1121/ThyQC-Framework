@@ -1,4 +1,4 @@
-"""Reproduce ThyQC predictions from bundled three-seed GT-QDM artifacts."""
+"""Evaluate ThyQC predictions with the bundled GT-QDM checkpoints."""
 from __future__ import annotations
 
 import argparse
@@ -108,7 +108,7 @@ def main():
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--seed", type=int, choices=(41, 42, 43))
     group.add_argument("--all-seeds", action="store_true")
-    parser.add_argument("--output-dir", type=Path, default=ROOT / "results" / "reproduced")
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "results" / "evaluation")
     args = parser.parse_args()
 
     seeds = (41, 42, 43) if args.all_seeds or args.seed is None else (args.seed,)
