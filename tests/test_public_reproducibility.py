@@ -25,8 +25,8 @@ def argparse_defaults(path: Path):
 
 
 class PublicReproducibilityTest(unittest.TestCase):
-    def test_public_test100_is_complete(self):
-        data_root = ROOT / "data" / "test100_anonymized"
+    def test_public_anonymized_set_is_complete(self):
+        data_root = ROOT / "data" / "anonymized_test"
         images = sorted((data_root / "images").glob("*.jpg"))
         frame_dirs = sorted((data_root / "ordered_frames").glob("THYQC_TEST_*"))
         self.assertEqual(len(images), 100)
@@ -48,10 +48,10 @@ class PublicReproducibilityTest(unittest.TestCase):
             self.assertGreater(temporal.stat().st_size, 10_000)
 
     def test_public_evaluation_assets_cover_all_seeds(self):
-        evaluator = ROOT / "code" / "evaluate_public_test100.py"
+        evaluator = ROOT / "code" / "evaluate_public.py"
         self.assertTrue(evaluator.is_file())
         for seed in (41, 42, 43):
-            features = ROOT / "results" / "features" / f"seed{seed}_test100_features.jsonl"
+            features = ROOT / "results" / "features" / f"seed{seed}_public_features.jsonl"
             self.assertTrue(features.is_file())
             rows = [json.loads(line) for line in features.read_text(encoding="utf-8").splitlines()]
             self.assertEqual(len(rows), 100)
