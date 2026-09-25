@@ -25,6 +25,45 @@ def argparse_defaults(path: Path):
 
 
 class PublicReproducibilityTest(unittest.TestCase):
+    def test_public_test100_is_complete(self):
+        data_root = ROOT / "data" / "test100_anonymized"
+        images = sorted((data_root / "images").glob("*.jpg"))
+        frame_dirs = sorted((data_root / "ordered_frames").glob("THYQC_TEST_*"))
+        self.assertEqual(len(images), 100)
+        self.assertEqual(len(frame_dirs), 100)
+        self.assertTrue(all(len(list(path.glob("*.jpg"))) == 4 for path in frame_dirs))
+        for name in (
+            "test100_labels.csv",
+            "test100_manifest.jsonl",
+            "test100_video_manifest.jsonl",
+        ):
+            self.assertTrue((data_root / name).is_file())
+
+    def test_three_seed_weights_are_bundled(self):
+        weight_root = ROOT / "weights" / "thyqc"
+        for seed in (41, 42, 43):
+            backbone = weight_root / f"seed{seed}_backbone_state.pt"
+            temporal = weight_root / f"seed{seed}_gt_qdm_state.pt"
+            self.assertGreater(backbone.stat().st_size, 1_000_000)
+            self.assertGreater(temporal.stat().st_size, 10_000)
+
+    def test_public_evaluation_assets_cover_all_seeds(self):
+        evaluator = ROOT / "code" / "evaluate_public_test100.py"
+        self.assertTrue(evaluator.is_file())
+        for seed in (41, 42, 43):
+            features = ROOT / "results" / "features" / f"seed{seed}_test100_features.jsonl"
+            self.assertTrue(features.is_file())
+            rows = [json.loads(line) for line in features.read_text(encoding="utf-8").splitlines()]
+            self.assertEqual(len(rows), 100)
+            self.assertTrue(all(len(row["token_probs"]) == 5 for row in rows))
+
+    def test_teacher_code_is_present_without_teacher_assets(self):
+        teacher_root = ROOT / "code" / "teacher"
+        self.assertTrue((teacher_root / "train_thyroid_llava_next_teacher_ft_v1_21.py").is_file())
+        self.assertTrue((teacher_root / "run_llava_med_v121_full_teacher.py").is_file())
+        self.assertFalse(any(ROOT.glob("**/*teacher*.pt")))
+        self.assertFalse(any(ROOT.glob("**/*rag*")))
+
     def test_stage1_defaults_match_reference_configuration(self):
         defaults = argparse_defaults(ROOT / "code" / "train_g2d_uot_thyqc_20260919.py")
         self.assertEqual(defaults["--lambda-prob"], 0.06)
