@@ -54,6 +54,12 @@ class PublicReproducibilityTest(unittest.TestCase):
         self.assertNotIn("No raw clinical dataset", readme)
         self.assertIn("2 percentage points", readme)
 
+    def test_two_stage_pipeline_has_cache_builder(self):
+        builder = ROOT / "code" / "build_g2d_gt_qdm_prob_cache_20260919.py"
+        self.assertTrue(builder.is_file())
+        for source in (ROOT / "code").glob("*.py"):
+            self.assertNotIn("/root/", source.read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     unittest.main()
