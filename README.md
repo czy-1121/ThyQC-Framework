@@ -1,57 +1,67 @@
-# ThyQC G2D-UOT + GT-QDM formal multi-seed reproduction
+# ThyQC
 
-This package contains the formal ThyQC G2D-UOT + GT-QDM multi-seed reproduction used for the reported results.
+ThyQC is a thyroid-ultrasound quality-control framework that transfers structured teacher knowledge to a compact student model. This public release contains the current G2D-UOT + GT-QDM implementation and the files needed to adapt it to an approved dataset.
 
-This repository is the public code release for ThyQC. It includes the formal training/evaluation implementation, reproducibility metadata, locked student-head weights, metrics, predictions, and a small set of anonymized four-frame examples. Raw clinical data, private server paths, credentials, and the full internal test set are intentionally excluded.
+## Repository contents
 
-## Formal protocol
+- `code/`: core modules, training scripts, inference scripts, GT-QDM, and G2D-UOT utilities.
+- `configs/`: seed-specific templates with private paths replaced by placeholders.
+- `data/anonymized_examples/`: a small collection of de-identified four-frame contact sheets.
+- `results/metrics_summary.csv`: aggregate metric summary for the formal multi-seed run.
+- `weights/README.md`: instructions for obtaining and placing compatible trainable weights.
+- `run_formal_inference.sh`: an inference-only replay template.
 
-- Seeds: 41, 42, 43
-- Backbone: InternVL3.5-2B-HF with the existing ThyQC probability cache
-- Student head: legacy GT-QDM `TemporalHead`
-- Objective: `CE + 0.06 * L_prob + 1.8 * L_G2D-UOT`
-- UOT mode: `transport`, epsilon `0.08`, rho `0.50`, 30 Sinkhorn iterations
-- Semantic cost: task-state semantic relation matrix
-- Clinical cost: chain/KG relations in `C_clin`
-- Test protocol: select checkpoint on validation, then evaluate the locked checkpoint once on test
+No raw clinical dataset, patient identifiers, private server information, per-sample predictions, or credentials are included.
 
-## Reproduction command
+## Method overview
 
-Run from a Python environment with the required dependencies after making the listed data paths available:
+The teacher supplies task probabilities and short structured task semantics. Probabilities provide transport mass, semantic task relations define transport geometry, and clinical chain and knowledge-graph relations constrain transfers. The student combines global contact-sheet evidence with ordered sparse-frame probabilities and GT-QDM temporal refinement.
+
+The training objective is:
+
+```text
+L_total = L_cls + lambda_prob * L_prob + lambda_G2D * L_G2D-UOT
+```
+
+The released templates use `lambda_prob=0.06` and `lambda_G2D=1.8`.
+
+## Setup
 
 ```bash
-python train_g2d_uot_gt_qdm_seed42_20260919.py \
-  --manifest <student_global_ordered_k4_manifest.jsonl> \
-  --prob-cache <seed_specific_student_image_prob_cache.jsonl> \
-  --teacher-jsonl <llava_med_teacher_labels.jsonl> \
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Obtain the selected backbone and approved clinical data under their original licenses. Replace the path placeholders in `configs/` and set `THYQC_CODE_ROOT` to the local `code/` directory.
+
+## Inference template
+
+```bash
+python code/train_g2d_uot_gt_qdm_seed42_20260919.py \
+  --manifest <student_manifest.jsonl> \
+  --prob-cache <student_probability_cache.jsonl> \
+  --teacher-jsonl <teacher_labels.jsonl> \
   --semantic-cost-mode fixed_jaccard \
   --out-dir <output_dir> \
-  --init-state <seed_specific_best_gt_qdm_state.pt> \
-  --seed <41|42|43> --epochs 0 \
-  --lambda-prob 0.06 --lambda-g2d 1.8 \
+  --init-state <trainable_gt_qdm_state.pt> \
+  --seed <seed> \
+  --epochs 0 \
+  --lambda-prob 0.06 \
+  --lambda-g2d 1.8 \
   --uot-loss-mode transport
 ```
 
-`--epochs 0` performs inference-only evaluation of the supplied locked checkpoint.
+For training, use the same script with the approved manifest, teacher package, and a positive epoch count. The command-line templates are intentionally path-agnostic so that no private machine layout is exposed.
 
-## Formal test recheck
+## Data and privacy
 
-The independent inference recheck reproduced the stored formal metrics exactly at the JSON-file level (matching SHA-256):
+The included images are de-identified examples only. Any clinical release requires institutional approval, de-identification review, and redistribution permission. Do not commit raw images, original case IDs, timestamps, local filesystem paths, free-text clinical notes, or credentials.
 
-| Seed | Mean Macro-F1 | Mean Macro-AUC |
-|---:|---:|---:|
-| 41 | 88.1822457 | 96.3080258 |
-| 42 | 86.1058911 | 95.5597494 |
-| 43 | 87.4724716 | 97.2624206 |
+## Weights
 
-The three-seed summary is in `formal_mean_sd_summary.csv`.
+The large base backbone and trainable checkpoints are intentionally not redistributed. See `weights/README.md` for the expected layout and license checks.
 
-## Code/model/data separation
+## License
 
-The package stores the exact training/evaluation code, GT-QDM state files, configurations, predictions, and metrics. The large backbone and dataset files remain external and are listed in `formal_reproduction_manifest.json` with their original remote paths.
-
-The implementation follows the paper's knowledge-transfer design: teacher task probabilities provide the transport mass, structured task semantics define the semantic geometry, clinical chain/KG relations define clinically compatible transport, and GT-QDM performs temporal refinement in the student model.
-
-## Data and licensing
-
-The included example contact sheets are for illustration and smoke testing only. Users must obtain the InternVL3.5-2B-HF backbone and any clinical dataset under their respective licenses. The internal test set should only be redistributed after institutional de-identification and data-sharing approval.
+The repository code is released under the MIT License. Third-party models, datasets, and example images remain under their original licenses.

@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Set ROOT to the directory containing the external data/model paths.
-ROOT="${ROOT:-/root}"
 PYTHON="${PYTHON:-python}"
 CODE="$(cd "$(dirname "$0")" && pwd)/code/train_g2d_uot_gt_qdm_seed42_20260919.py"
 MANIFEST="${MANIFEST:?Set MANIFEST to student_global_ordered_k4_manifest.jsonl}"

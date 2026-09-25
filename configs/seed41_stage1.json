@@ -38,7 +38,6 @@
   "independent_kg_loss": false,
   "clinical_cost": "chain+kg mappings in C_clin",
   "task_count": 5,
-  "teacher_soft_hits": 4482,
   "prob_teacher_source": "<teacher_labels.jsonl>",
   "teacher_source_mass": "raw probabilities before consistency-graph projection",
   "semantic_cost": "fixed_jaccard",

@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from transformers import AutoProcessor
 
-sys.path.insert(0, "/root/autodl-tmp/thyroid_qc/code")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import train_thyroid_internvl_student_kgkd_v1_22_20260718 as base
 
 

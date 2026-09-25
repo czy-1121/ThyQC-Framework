@@ -33,10 +33,5 @@
   "semantic_cost": "fixed_jaccard",
   "clinical_cost": "legacy chain+KG relations",
   "uot_objective": "relaxed-marginal Sinkhorn transport discrepancy",
-  "teacher_hits": {
-    "train": 302,
-    "val": 81,
-    "test": 94
-  },
   "best_epoch_by_validation": 0
 }
