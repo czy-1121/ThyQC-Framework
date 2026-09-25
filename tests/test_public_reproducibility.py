@@ -59,8 +59,14 @@ class PublicReproducibilityTest(unittest.TestCase):
 
     def test_teacher_code_is_present_without_teacher_assets(self):
         teacher_root = ROOT / "code" / "teacher"
-        self.assertTrue((teacher_root / "train_thyroid_llava_next_teacher_ft_v1_21.py").is_file())
-        self.assertTrue((teacher_root / "run_llava_med_v121_full_teacher.py").is_file())
+        for name in (
+            "build_teacher_rationale_sft_dataset.py",
+            "train_teacher_rationale_adapter.py",
+            "generate_teacher_structured_rationales.py",
+            "rationale_semantic_rules.py",
+            "audit_teacher_knowledge_packages.py",
+        ):
+            self.assertTrue((teacher_root / name).is_file())
         self.assertFalse(any(ROOT.glob("**/*teacher*.pt")))
         self.assertFalse(any(ROOT.glob("**/*rag*")))
 
