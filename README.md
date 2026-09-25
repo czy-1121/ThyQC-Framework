@@ -5,8 +5,8 @@ Official implementation of **ThyQC**, a multi-task quality-control framework for
 ## Installation
 
 ```bash
-git clone https://github.com/czy-1121/ThyQC.git
-cd ThyQC
+git clone https://github.com/czy-1121/ThyQC-Framework.git
+cd ThyQC-Framework
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt

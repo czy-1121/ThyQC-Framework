@@ -95,7 +95,7 @@ class ThyQCFrameworkTest(unittest.TestCase):
     def test_readme_uses_thyqc_framework_style(self):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("Official implementation", readme)
-        self.assertIn("github.com/czy-1121/ThyQC.git", readme)
+        self.assertIn("github.com/czy-1121/ThyQC-Framework.git", readme)
         self.assertIn("## Evaluation", readme)
 
     def test_generic_framework_file_names(self):
