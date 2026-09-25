@@ -1,0 +1,13 @@
+case_code,category,caption,teacher_all5_correct,thyqc_all5_correct,frame_count
+C04,off_target,Clear image but non-thyroid anatomy is displayed,True,True,4
+C05,off_target,Readable image but reliable thyroid tissue is not shown,True,True,4
+C06,off_target,Clear image but non-thyroid anatomy is displayed,True,True,4
+C07,clear_complete,Thyroid parenchyma is clear and the target is fully visible,True,True,4
+C08,clear_complete,Thyroid region is clear with complete target coverage,True,True,4
+C09,clear_complete,Clear complete thyroid view suitable as a keyframe,True,True,4
+C10,partial,Thyroid-like tissue is visible but coverage is incomplete,True,True,4
+C11,partial,Only part of the superficial target is covered,True,True,4
+C12,partial,Target is partly visible but not complete enough for a keyframe,True,True,4
+A01,unstable_motion,Probe motion causes view instability,not_applicable,not_applicable,4
+A02,unstable_motion,Probe movement causes changes across consecutive frames,not_applicable,not_applicable,4
+A03,unstable_motion,Motion blur and unstable probe position,not_applicable,not_applicable,4

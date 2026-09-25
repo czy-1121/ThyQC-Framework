@@ -1,0 +1,50 @@
+[
+  {
+    "task": "image_usability",
+    "Acc": 87.0,
+    "Macro-P": 89.5530012771392,
+    "Macro-R": 87.54271512892203,
+    "Macro-F1": 87.47986191024165,
+    "Macro-AUC": 96.69256820929535
+  },
+  {
+    "task": "structure_visibility",
+    "Acc": 89.0,
+    "Macro-P": 92.98172757475083,
+    "Macro-R": 85.90225563909775,
+    "Macro-F1": 87.56225256225255,
+    "Macro-AUC": 96.49136080469441
+  },
+  {
+    "task": "keyframe_status",
+    "Acc": 91.0,
+    "Macro-P": 93.02325581395348,
+    "Macro-R": 85.25569242254572,
+    "Macro-F1": 86.85658427593911,
+    "Macro-AUC": 97.33112783208712
+  },
+  {
+    "task": "primary_defect",
+    "Acc": 89.0,
+    "Macro-P": 92.26744186046511,
+    "Macro-R": 86.88747731397459,
+    "Macro-F1": 87.73182957393485,
+    "Macro-AUC": 97.92684214357402
+  },
+  {
+    "task": "recommended_action",
+    "Acc": 89.0,
+    "Macro-P": 92.26744186046511,
+    "Macro-R": 86.88747731397459,
+    "Macro-F1": 87.73182957393485,
+    "Macro-AUC": 97.87020421283908
+  },
+  {
+    "task": "five_task_mean",
+    "Acc": "",
+    "Macro-P": "",
+    "Macro-R": "",
+    "Macro-F1": 87.4724715792606,
+    "Macro-AUC": 97.262420640498
+  }
+]

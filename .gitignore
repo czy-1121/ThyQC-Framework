@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.log
+*.tmp
+*.swp
+.env
+.env.*
+data/raw/
+data/private/
+outputs/
+checkpoints/
+*.tar.gz
+*.zip
