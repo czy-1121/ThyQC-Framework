@@ -33,9 +33,9 @@ class PublicReproducibilityTest(unittest.TestCase):
         self.assertEqual(len(frame_dirs), 100)
         self.assertTrue(all(len(list(path.glob("*.jpg"))) == 4 for path in frame_dirs))
         for name in (
-            "test100_labels.csv",
-            "test100_manifest.jsonl",
-            "test100_video_manifest.jsonl",
+            "labels.csv",
+            "manifest.jsonl",
+            "video_manifest.jsonl",
         ):
             self.assertTrue((data_root / name).is_file())
 
