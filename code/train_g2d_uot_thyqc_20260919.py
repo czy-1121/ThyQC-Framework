@@ -271,7 +271,7 @@ def run():
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--init-state", default="")
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--epochs", type=int, default=3)
+    ap.add_argument("--epochs", type=int, default=5)
     ap.add_argument("--samples-per-epoch", type=int, default=1600)
     ap.add_argument("--batch-size", type=int, default=1)
     ap.add_argument("--grad-accum", type=int, default=8)
@@ -281,7 +281,7 @@ def run():
     ap.add_argument("--lora-alpha", type=int, default=32)
     ap.add_argument("--max-num", type=int, default=6)
     ap.add_argument("--max-images", type=int, default=1)
-    ap.add_argument("--pseudo-hard-weight", type=float, default=0.25)
+    ap.add_argument("--pseudo-hard-weight", type=float, default=1.0)
     ap.add_argument(
         "--teacher-on-physician",
         action="store_true",
@@ -296,17 +296,17 @@ def run():
         help="Use teacher probabilities for physician rows in L_prob as well.",
     )
     ap.add_argument("--lambda-prob", type=float, default=0.06)
-    ap.add_argument("--lambda-g2d", type=float, default=0.06)
+    ap.add_argument("--lambda-g2d", type=float, default=1.8)
     ap.add_argument("--clinical-eta", type=float, default=1.0)
     ap.add_argument("--semantic-context-weight", type=float, default=2.0)
     ap.add_argument("--semantic-cost-mode", choices=("probability", "fixed_jaccard"),
-                    default="probability")
+                    default="fixed_jaccard")
     ap.add_argument("--temperature", type=float, default=2.0)
     ap.add_argument("--uot-epsilon", type=float, default=0.08)
     ap.add_argument("--uot-rho", type=float, default=0.50)
     ap.add_argument("--uot-iterations", type=int, default=30)
-    ap.add_argument("--uot-loss-mode", choices=("full", "transport"), default="full")
-    ap.add_argument("--log-every", type=int, default=40)
+    ap.add_argument("--uot-loss-mode", choices=("full", "transport"), default="transport")
+    ap.add_argument("--log-every", type=int, default=320)
     ap.add_argument("--validation-only", action="store_true",
                     help="Tune on validation only; never evaluate or write test results.")
     ap.add_argument("--preserve-legacy-test-loader-rng", action="store_true",

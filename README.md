@@ -1,67 +1,89 @@
 # ThyQC
 
-ThyQC is a thyroid-ultrasound quality-control framework that transfers structured teacher knowledge to a compact student model. This public release contains the current G2D-UOT + GT-QDM implementation and the files needed to adapt it to an approved dataset.
+Official implementation of **ThyQC**, a multi-task quality-control framework for thyroid ultrasound. ThyQC transfers task probabilities and structured semantic knowledge from a generative teacher to a compact discriminative student through G2D-UOT, followed by GT-QDM temporal refinement.
 
-## Repository contents
-
-- `code/`: core modules, training scripts, inference scripts, GT-QDM, and G2D-UOT utilities.
-- `configs/`: seed-specific templates with private paths replaced by placeholders.
-- `data/anonymized_examples/`: a small collection of de-identified four-frame contact sheets.
-- `results/metrics_summary.csv`: aggregate metric summary for the formal multi-seed run.
-- `weights/README.md`: instructions for obtaining and placing compatible trainable weights.
-- `run_formal_inference.sh`: an inference-only replay template.
-
-No raw clinical dataset, patient identifiers, private server information, per-sample predictions, or credentials are included.
-
-## Method overview
-
-The teacher supplies task probabilities and short structured task semantics. Probabilities provide transport mass, semantic task relations define transport geometry, and clinical chain and knowledge-graph relations constrain transfers. The student combines global contact-sheet evidence with ordered sparse-frame probabilities and GT-QDM temporal refinement.
-
-The training objective is:
-
-```text
-L_total = L_cls + lambda_prob * L_prob + lambda_G2D * L_G2D-UOT
-```
-
-The released templates use `lambda_prob=0.06` and `lambda_G2D=1.8`.
-
-## Setup
+## Installation
 
 ```bash
+git clone https://github.com/czy-1121/ThyQC-Reproducible.git
+cd ThyQC-Reproducible
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Obtain the selected backbone and approved clinical data under their original licenses. Replace the path placeholders in `configs/` and set `THYQC_CODE_ROOT` to the local `code/` directory.
+The student backbone is [OpenGVLab/InternVL3_5-2B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-2B-HF).
 
-## Inference template
+## Data preparation
+
+The training manifest is a JSONL file containing the sample identifier, input image paths, five task labels, data split, and label source. The teacher package is a JSONL file containing task probabilities and short task-wise rationales. Path templates and training settings are provided in `configs/`.
+
+The clinical dataset is available under the corresponding institutional data-use requirements. The images in `data/anonymized_examples/` are de-identified examples illustrating the input format.
+
+## Training
+
+### 1. G2D-UOT student training
+
+```bash
+python code/train_g2d_uot_thyqc_20260919.py \
+  --model-path OpenGVLab/InternVL3_5-2B-HF \
+  --manifest <manifest.jsonl> \
+  --teacher-jsonl <teacher_package.jsonl> \
+  --out-dir outputs/seed42/stage1 \
+  --seed 42 \
+  --validation-only
+```
+
+### 2. Probability cache
+
+```bash
+python code/build_g2d_gt_qdm_prob_cache_20260919.py \
+  --model-path OpenGVLab/InternVL3_5-2B-HF \
+  --checkpoint outputs/seed42/stage1/best_trainable_state.pt \
+  --manifest <manifest.jsonl> \
+  --out outputs/seed42/student_image_prob_cache.jsonl \
+  --seed 42
+```
+
+### 3. GT-QDM training
 
 ```bash
 python code/train_g2d_uot_gt_qdm_seed42_20260919.py \
-  --manifest <student_manifest.jsonl> \
-  --prob-cache <student_probability_cache.jsonl> \
-  --teacher-jsonl <teacher_labels.jsonl> \
-  --semantic-cost-mode fixed_jaccard \
-  --out-dir <output_dir> \
-  --init-state <trainable_gt_qdm_state.pt> \
-  --seed <seed> \
-  --epochs 0 \
-  --lambda-prob 0.06 \
-  --lambda-g2d 1.8 \
-  --uot-loss-mode transport
+  --manifest <manifest.jsonl> \
+  --prob-cache outputs/seed42/student_image_prob_cache.jsonl \
+  --teacher-jsonl <teacher_package.jsonl> \
+  --out-dir outputs/seed42/gt_qdm \
+  --seed 42 \
+  --validation-only
 ```
 
-For training, use the same script with the approved manifest, teacher package, and a positive epoch count. The command-line templates are intentionally path-agnostic so that no private machine layout is exposed.
+Use seeds `41`, `42`, and `43` for the multi-seed experiment.
 
-## Data and privacy
+## Evaluation
 
-The included images are de-identified examples only. Any clinical release requires institutional approval, de-identification review, and redistribution permission. Do not commit raw images, original case IDs, timestamps, local filesystem paths, free-text clinical notes, or credentials.
+Evaluate the validation-selected checkpoint without further optimization:
 
-## Weights
+```bash
+python code/train_g2d_uot_gt_qdm_seed42_20260919.py \
+  --manifest <manifest.jsonl> \
+  --prob-cache outputs/seed42/student_image_prob_cache.jsonl \
+  --teacher-jsonl <teacher_package.jsonl> \
+  --out-dir outputs/seed42/evaluation \
+  --init-state outputs/seed42/gt_qdm/best_gt_qdm_state.pt \
+  --seed 42 \
+  --epochs 0
+```
 
-The large base backbone and trainable checkpoints are intentionally not redistributed. See `weights/README.md` for the expected layout and license checks.
+The task-level metrics are written to `best_test_metrics_at_val_best.json`. Reference aggregate metrics are provided in `results/metrics_summary.csv`. A reproduction within **2 percentage points** of the reference result is considered consistent across supported environments.
+
+## Model weights
+
+See `weights/README.md` for backbone and ThyQC checkpoint instructions.
+
+## Citation
+
+Citation information will be added with the paper release.
 
 ## License
 
-The repository code is released under the MIT License. Third-party models, datasets, and example images remain under their original licenses.
+This repository is released under the MIT License and is intended for research use. Third-party models and datasets remain subject to their original licenses and access conditions.

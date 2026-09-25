@@ -1,6 +1,16 @@
-# Weights
+# Model weights
 
-Place compatible trainable state files here when running a replay or evaluation:
+## Backbone
+
+Download the InternVL3.5-2B-HF backbone from Hugging Face:
+
+- [OpenGVLab/InternVL3_5-2B-HF](https://huggingface.co/OpenGVLab/InternVL3_5-2B-HF)
+
+The Hugging Face repository ID can be passed directly to `--model-path`.
+
+## ThyQC checkpoints
+
+Evaluation-only checkpoints use the following layout:
 
 ```text
 weights/
@@ -9,4 +19,4 @@ weights/
   seed43_best_gt_qdm_state.pt
 ```
 
-The large base backbone is intentionally not included. Obtain it from the original provider and follow its license and access terms. Do not commit private checkpoints, access tokens, or credentials. Add a verified release or model-hub URL only after confirming redistribution rights.
+The checkpoints can also be regenerated with the training commands in the main README. When released separately, place the downloaded files in this directory without renaming them.
