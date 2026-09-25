@@ -14,3 +14,5 @@ outputs/
 checkpoints/
 *.tar.gz
 *.zip
+
+results/reproduced/

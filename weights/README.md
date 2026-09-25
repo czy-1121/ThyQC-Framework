@@ -10,13 +10,17 @@ The Hugging Face repository ID can be passed directly to `--model-path`.
 
 ## ThyQC checkpoints
 
-Evaluation-only checkpoints use the following layout:
+The repository stores the three released student runs with Git LFS:
 
 ```text
 weights/
-  seed41_best_gt_qdm_state.pt
-  seed42_best_gt_qdm_state.pt
-  seed43_best_gt_qdm_state.pt
+  thyqc/
+    seed41_backbone_state.pt
+    seed41_gt_qdm_state.pt
+    seed42_backbone_state.pt
+    seed42_gt_qdm_state.pt
+    seed43_backbone_state.pt
+    seed43_gt_qdm_state.pt
 ```
 
-The checkpoints can also be regenerated with the training commands in the main README. When released separately, place the downloaded files in this directory without renaming them.
+Run `git lfs pull` after cloning if the checkpoint files were not downloaded automatically.
